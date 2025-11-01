@@ -1,16 +1,17 @@
 import textwrap
 
+
 def main():
     LIMITE_SAQUES = 3
     AGENCIA = "0001"
-    
+
     saldo = 0
     limite = 500
     extrato = ""
     numero_saques = 0
     usuarios = []
     contas = []
-    
+
     while True:
 
         opcao = menu()
@@ -27,31 +28,36 @@ def main():
                 valor=valor,
                 limite=limite,
                 numero_saques=numero_saques,
-                limites_saques=LIMITE_SAQUES
+                limites_saques=LIMITE_SAQUES,
             )
-            
+
         elif opcao == "e":
             exibir_extrato(saldo, extrato=extrato)
 
         elif opcao == "nu":
             create_user(usuarios)
-        
+
         elif opcao == "nc":
             numero_conta = len(contas) + 1
             conta = create_conta(AGENCIA, numero_conta, usuarios)
 
             if conta:
                 contas.append(conta)
-                print(f"Conta criada com sucesso!! AG: {conta["agencia"]} CONTA: {conta["numero_conta"]}")
-        
+                print(
+                    f"Conta criada com sucesso!! AG: {conta["agencia"]} CONTA: {conta["numero_conta"]}"
+                )
+
         elif opcao == "lc":
             list_contas(contas)
-            
+
         elif opcao == "q":
             break
 
         else:
-            print("Operação inválida, por favor selecione novamente a operação desejada.")  
+            print(
+                "Operação inválida, por favor selecione novamente a operação desejada."
+            )
+
 
 def menu():
     menu = """\n
@@ -64,7 +70,8 @@ def menu():
     [lc]\tLista Contas
     => """
     return input(textwrap.dedent(menu))
-    
+
+
 def depositar(saldo, valor, extrato, /):
 
     if valor > 0:
@@ -77,7 +84,8 @@ def depositar(saldo, valor, extrato, /):
 
     return saldo, extrato
 
-def sacar(*,saldo, valor, extrato, limite, numero_saques, limites_saques):
+
+def sacar(*, saldo, valor, extrato, limite, numero_saques, limites_saques):
 
     excedeu_saldo = valor > saldo
     excedeu_limite = valor > limite
@@ -103,66 +111,71 @@ def sacar(*,saldo, valor, extrato, limite, numero_saques, limites_saques):
 
     return saldo, extrato, numero_saques
 
+
 def exibir_extrato(saldo, /, *, extrato):
     print("\n================ EXTRATO ================")
     if not extrato:
         print("Não foram realizadas movimentações.")
     else:
         print(extrato)
-        print("Seu Extrato:")    
+        print("Seu Extrato:")
         print(f"\nSaldo: R$ {saldo:.2f}")
         print("==========================================")
 
+
 def create_user(usuarios):
-    print("\n================ Novo  Usuário ================")  
+    print("\n================ Novo  Usuário ================")
     cpf = input("Informe o CPF (somente número): ")
     nome = input("Informe o nome completo: ")
     data_nascimento = input("Informe a data de nascimento (dd-mm-aaaa): ")
-    endereco = input("Informe o endereço (logradouro, nro - bairro - cidade/sigla estado): ")
+    endereco = input(
+        "Informe o endereço (logradouro, nro - bairro - cidade/sigla estado): "
+    )
 
     usuario = filtra_cpf(cpf, usuarios)
 
-    if usuario:      
+    if usuario:
         print("Ops!! usuário já existe")
         return
-    
-    usuarios.append({
-        "nome": nome,
-        "cpf": cpf,
-        "data_nascimento": data_nascimento,
-        "endereco":endereco
-        })
-    print(f'\n Cadastrado com sucesso!! \n CPF: {cpf} \n NOME: {nome}')
-    
+
+    usuarios.append(
+        {
+            "nome": nome,
+            "cpf": cpf,
+            "data_nascimento": data_nascimento,
+            "endereco": endereco,
+        }
+    )
+    print(f"\n Cadastrado com sucesso!! \n CPF: {cpf} \n NOME: {nome}")
+
+
 def filtra_cpf(cpf, usuarios):
     for usuario in usuarios:
         if usuario["cpf"] == cpf:
             return cpf
         return None
 
+
 def create_conta(agencia, numero_conta, usuarios):
-    print("\n================ Nova CONTA ================")  
+    print("\n================ Nova CONTA ================")
     cpf = input("Informe o CPF (somente número): ")
     user = filtra_cpf(cpf, usuarios)
 
     if user:
         return {"agencia": agencia, "numero_conta": numero_conta, "cpf": cpf}
-    
+
     print(f"Usuário não existe!!!")
-    
+
+
 def list_contas(contas):
     for conta in contas:
-        linha = f'''
+        linha = f"""
             AGENCIA: {conta["agencia"]}
             NUMERO_CONTA: {conta["numero_conta"]} 
             CPF: {conta["cpf"]}
-        '''
+        """
         print("=" * 100)
         print(textwrap.dedent(linha))
 
+
 main()
-
-
-
-
-
